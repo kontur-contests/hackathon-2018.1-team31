@@ -50,31 +50,40 @@ function seconds() {
         second = 11;
     }*/
 }
+var pos;
 
-isGameReadyTimerObj = setInterval(isGameReadyTimer, 500);
+
 
 function isGameReadyTimer () {
+	
     var xhttp = new XMLHttpRequest();
+    
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
 			response = this.responseText;
-			alert(response);
+			if (response.indexOf('game')>0) {
+				clearTimeout(isGameReadyTimer);
+			}
+			console.log('response is '+response);
+			pos = JSON.parse(response);
+			console.log('pos is '+pos);
+			
        }
     };
-    xhttp.open("GET", "http://10.34.32.34:80/getId?"+myId, true);
+    xhttp.open("GET", "http://10.34.32.34:80/getStartGame?id="+myId, true);
     xhttp.send();
 
 }
 
 function position() {
-    if (myId = 1)
+    if (pos = 1)
     {
         posPlayer1X = 0;
         posPlayer1Y = 70;
         posPlayer2X = 630;
         posPlayer2Y = 630;
     }
-    else if (myId = 2)
+    else if (pos = 2)
     {
         posPlayer1X = 630;
         posPlayer1Y = 630;
@@ -103,15 +112,15 @@ function create() {
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.ESC, Phaser.Keyboard.SPACEBAR ]);
     
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
+    var xhttpGetId = new XMLHttpRequest();
+    xhttpGetId.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             myId = this.responseText;
        }
     };
-    xhttp.open("GET", "http://10.34.32.34:80/getId", true);
-    xhttp.send();
-    
+    xhttpGetId.open("GET", "http://10.34.32.34:80/getId", true);
+    xhttpGetId.send();
+    isGameReadyTimerObj = setInterval(isGameReadyTimer, 5000);
 }
 
 function update() {
