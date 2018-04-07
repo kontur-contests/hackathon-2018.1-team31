@@ -15,36 +15,43 @@ game.load.image('myhero', './assets/Tuskan-Marine.png');
 //game.load.image('star', 'assets/star.png');
 //game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 }
+
 var player;
 var cursors;
 var turn = true;
-TurnEndTimer = setTimeout(fTurnEnd, 5000);
+TurnEndTimer = setInterval(fTurnEnd, 10000);
 
 function fTurnEnd () {
-	turn = false;
-	//alert(turn);
+    turn = false;
+    labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
 }
+
+/*printTimer = setInterval(turnPrint, 500);
+
+function turnPrint () {
+    //labelTurn.destroy();
+    labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
+}*/
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.sprite(0, 0, 'ground');
-    //game.add.tileSprite(0, 0, 'ground'); //why it doesn't work?!
+
     game.world.setBounds(0, 0, 768, 768);//may be it will not work because of #23
     player = game.add.sprite(game.world.centerX-30, game.world.centerY-70, 'myhero');
-    game.add.text(500, 20, turn ? 'Ваш ход' : 'Ход соперника')
+    labelTurn = game.add.text(450, 20, turn === true ? 'Ваш ход' : 'Ход соперника');
     game.add.sprite(650, 0, 'gold');
 
     game.physics.arcade.enable(player);
     cursors = game.input.keyboard.createCursorKeys();
-    //game.camera.follow(player);
-    //https://phaser.io/examples/v2/camera/basic-follow
+
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.ESC, Phaser.Keyboard.SPACEBAR ]);
 }
 
 function update() {
-	
+
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
 	if (turn === true) {
