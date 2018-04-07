@@ -169,8 +169,12 @@ function create() {
 function update() {
     
     function moveTo(x, y, player) {
-        player.x = x;
-        player.y = y;
+        if (x>=0 && x<=734) {
+			player.x = x;
+		}
+		if (y>=0 && y<=734) {
+			player.y = y;
+		}
         fTurnEnd();
     }
     player.body.velocity.x = 0;
