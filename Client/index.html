@@ -18,14 +18,12 @@ var player;
 var cursors;
 var turn = true;
 var second = 10;
-var playerHandler = 1;
 
 TurnEndTimer = setInterval(fTurnEnd, 10000);
 
 function fTurnEnd () {
     turn = false;
     labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
-    second = 10;
 }
 
 function getRandomInt(max) {
@@ -61,8 +59,7 @@ function create() {
     game.add.sprite(0, 0, 'ground');
 
     game.world.setBounds(0, 0, 768, 768);//may be it will not work because of #23
-    player = game.add.sprite(0, 70, 'myhero');
-    player2 = game.add.sprite(630, 630, 'myhero');
+    player = game.add.sprite(game.world.centerX-30, game.world.centerY-70, 'myhero');
     //player.scale(0.25,0.25);
     timer = game.add.text(380, 20, second);
     labelTurn = game.add.text(450, 20, turn === true ? 'Ваш ход' : 'Ход соперника');
