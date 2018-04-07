@@ -234,7 +234,9 @@ function endGame() {
     localStorage.removeItem('playerId');
 }
 function checkStartBattle() {
-	if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 ) {
+	var battleSent = false;
+	
+	if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 && battleSent===true) {
 			var xhttpSendStartBattle = new XMLHttpRequest();
 			xhttpSendStartBattle.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
@@ -243,6 +245,7 @@ function checkStartBattle() {
 			};
 			xhttpSendStartBattle.open("GET", "http://10.34.32.34:80/sendStartBattle", true);
 			xhttpSendStartBattle.send();
+			battleSent = true;
 	}
 }
 </script>
