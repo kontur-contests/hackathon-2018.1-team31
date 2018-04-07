@@ -18,6 +18,7 @@ var player;
 var cursors;
 var turn = true;
 var second = 10;
+var myId;
 
 TurnEndTimer = setInterval(fTurnEnd, 10000);
 
@@ -45,16 +46,21 @@ function seconds() {
     }*/
 }
 
+isGameReadyTimerObj = setInterval(isGameReadyTimer, 500);
+
+function isGameReadyTimer () {
+    var xhttpGetStartGame = new XMLHttpRequest();
+    xhttpGetStartGame.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+			response = this.responseText;
+			alert(response);
+       }
+    };
+    xhttp.open("GET", "getId?"+myId, true);
+    xhttp.send();
+}
 
 function create() {
-    //read playerId
-	if (localStorage.getItem('playerId')!=null) {
-		playerId = localStorage.getItem('playerId');
-	} else {
-		playerId = getRandomInt(1000);
-		localStorage.setItem('playerId', playerId);
-	}
-		
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.sprite(0, 0, 'ground');
@@ -72,6 +78,16 @@ function create() {
 
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.ESC, Phaser.Keyboard.SPACEBAR ]);
+    
+    var xhttpGetId = new XMLHttpRequest();
+    xhttpGetId.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            myId = this.responseText;
+       }
+    };
+    xhttp.open("GET", "getId", true);
+    xhttp.send();
+    
 }
 
 function update() {
