@@ -32,27 +32,16 @@ function fTurnEnd () {
     labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
     second = 10;
 
-    
     var xhttpSendMyCoord = new XMLHttpRequest();
     xhttpSendMyCoord.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
 			response = this.responseText;
 			if (response.indexOf('game')>0) {
 				clearTimeout(isGameReadyTimerObj);
-				//console.log('game started');
-				
-				//myPosTmp = JSON.parse(this.responseText);
-				//pos = myPosTmp.pos;
-				//position();
 			}
-			//console.log('response is '+response);
-			//pos = JSON.parse(response);
-			//console.log('pos is '+pos);
-			
+
        }
     };
-    //console.log(myId, typeof myId);
-    //setMyCoordinate?id=2&x=2&y=25
     xhttpSendMyCoord.open("GET", "http://10.34.32.34:80/setMyCoordinate?id="+myId.toString()+
 		"&x="+(player.x).toString()+"&y="+(player.y).toString(), true);
     xhttpSendMyCoord.send();
@@ -68,13 +57,9 @@ let secondsTimer = setInterval(seconds, 1000);
 function seconds() {
     if (second === 1) {
         clearTimeout(secondsTimer);
-        //secondsTimer.delete();
     }
     second = second - 1;
     timer.setText(second);
-    /*if (second === 0) {
-        second = 11;
-    }*/
 }
 var pos;
 
@@ -92,16 +77,18 @@ function isGameReadyTimer () {
 				//console.log('game started');
 				
 				myPosTmp = JSON.parse(this.responseText);
-				pos = myPosTmp.pos;
-				position();
+				if (myPosTmp.status === 'wait')
+                {
+                    return
+                }
+                else
+                {
+                    pos = myPosTmp.pos;
+                    position();
+                }
 			}
-			//console.log('response is '+response);
-			//pos = JSON.parse(response);
-			//console.log('pos is '+pos);
-			
        }
     };
-    //console.log(myId, typeof myId);
     xhttp.open("GET", "http://10.34.32.34:80/getStartGame?id="+myId.toString(), true);
     xhttp.send();
 
