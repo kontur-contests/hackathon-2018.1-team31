@@ -127,10 +127,9 @@ function position() {
 }
 
 function curentPosition() {
-    //player.x = posPlayer1X;
-    //player.y = posPlayer1Y;
     player2.x = posPlayer2X;
     player2.y = posPlayer2Y;
+    checkStartBattle();
 }
 
 function create() {
@@ -169,15 +168,17 @@ function create() {
 }
 
 function update() {
-
     function moveTo(x, y, player) {
         if (x>=0 && x<=736) {
-            player.x = x;
-        }
-        if (y>=0 && y<=736) {
-            player.y = y;
-        }
-        fTurnEnd();
+			player.x = x;
+			checkStartBattle();
+			fTurnEnd();
+		}
+		if (y>=0 && y<=736) {
+			player.y = y;
+			checkStartBattle();
+			fTurnEnd();
+		}
     }
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
@@ -207,6 +208,18 @@ function update() {
             turn = false;
         }
     }
+}
+function checkStartBattle() {
+	if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 ) {
+			var xhttpSendStartBattle = new XMLHttpRequest();
+			xhttpSendStartBattle.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					response = this.responseText;
+			   }
+			};
+			xhttpSendStartBattle.open("GET", "http://10.34.32.34:80/sendStartBattle", true);
+			xhttpSendStartBattle.send();
+	}
 }
 function endGame() {
     localStorage.removeItem('playerId');
