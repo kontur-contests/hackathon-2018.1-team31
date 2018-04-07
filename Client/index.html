@@ -225,15 +225,20 @@ function create() {
 }
 
 function update() {
+    game.physics.arcade.collide(player, platforms);
     // делаешь ты 
     function moveTo(x, y, player) {
-        if (x>=0 && x<=736) {
+        
+        game.physics.arcade.moveToXY(player, x, y, 500, 10);
+        /*if (x>=0 && x<=736) {
             player.x = x;
         }
         if (y>=0 && y<=736) {
             player.y = y;
         }
+        }*/
     }
+
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
 
