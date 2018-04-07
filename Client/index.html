@@ -18,6 +18,7 @@ function preload() {
 var player;
 var cursors;
 
+var secondsTimer;
 var timer; 
 var turn = true;
 var second = 10;
@@ -28,14 +29,15 @@ var posPlayer2X;
 var posPlayer2Y;
 var pos;
 
-TurnEndTimer = setInterval(fTurnEnd, 10000);
 
 function fTurnEnd () {
+
     if(turn == true) {
         turn = false;
     } else {
         turn = true;
     }
+    
     labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
     second = 10;
 
@@ -60,6 +62,7 @@ var xhttpEnemyCoord = new XMLHttpRequest();
             enemyCoordTmp = JSON.parse(this.responseText);
             if(posPlayer2X != enemyCoordTmp.x || posPlayer2Y != enemyCoordTmp.y) {
                 turn = true;
+                console.log('fdf');
             } 
             posPlayer2X = enemyCoordTmp.x;
             posPlayer2Y = enemyCoordTmp.y;
@@ -73,8 +76,6 @@ var xhttpEnemyCoord = new XMLHttpRequest();
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
-
-let secondsTimer = setInterval(seconds, 1000);
 
 function seconds() {
     if (second === 1) {
@@ -97,6 +98,8 @@ function isGameReadyTimer () {
 				if (myPosTmp.status === 'wait') {
                     return
                 } else {
+                    secondsTimer = setInterval(seconds, 1000);
+                    setInterval(fTurnEnd, 10000);
                     pos = myPosTmp.pos;
                     position();
                 }
@@ -191,23 +194,23 @@ function update() {
     if (turn === true) {
         if (cursors.up.isDown)
         {
-            moveTo(player.x,player.y-6,player);
+            moveTo(player.x,player.y-32,player);
             fTurnEnd();
         }
         else if (cursors.down.isDown)
         {
-            moveTo(player.x,player.y+6,player);
+            moveTo(player.x,player.y+32,player);
             fTurnEnd();
         }
         if (cursors.left.isDown)
         {
-            moveTo(player.x-6,player.y,player);
+            moveTo(player.x-32,player.y,player);
             //player.animations.play('left');
             fTurnEnd();
         }
         else if (cursors.right.isDown)
         {
-            moveTo(player.x+6,player.y,player);
+            moveTo(player.x+32,player.y,player);
             //player.animations.play('right');
             fTurnEnd();
         }
