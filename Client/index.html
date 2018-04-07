@@ -32,8 +32,19 @@ function turnPrint () {
     //labelTurn.destroy();
     labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
 }*/
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
 
 function create() {
+    //read playerId
+	if (localStorage.getItem('playerId')!=null) {
+		playerId = localStorage.getItem('playerId');
+	} else {
+		playerId = getRandomInt(1000);
+		localStorage.setItem('playerId', playerId);
+	}
+		
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.sprite(0, 0, 'ground');
