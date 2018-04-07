@@ -17,6 +17,7 @@ game.load.image('myhero', './assets/Tuskan-Marine.png');
 }
 var player;
 var cursors;
+var turn = true;
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -24,7 +25,8 @@ function create() {
     game.add.sprite(0, 0, 'ground');
     //game.add.tileSprite(0, 0, 'ground'); //why it doesn't work?!
     game.world.setBounds(0, 0, 768, 768);//may be it will not work because of #23
-    player = game.add.sprite(game.world.centerX, game.world.centerY, 'myhero');
+    player = game.add.sprite(game.world.centerX-30, game.world.centerY-70, 'myhero');
+    game.add.text(500, 20, turn ? 'Ваш ход' : 'Ход соперника')
     game.add.sprite(650, 0, 'gold');
 
     game.physics.arcade.enable(player);
@@ -64,6 +66,9 @@ function update() {
     }
 
 }
+
+var timer = setTimeout()
+
 </script>
 </body>
 </html>
