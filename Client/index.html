@@ -16,9 +16,14 @@ function preload() {
 
 var player;
 var cursors;
+
 var turn = true;
 var second = 10;
 var myId;
+var posPlayer1X;
+var posPlayer1Y;
+var posPlayer2X;
+var posPlayer2Y;
 
 TurnEndTimer = setInterval(fTurnEnd, 10000);
 
@@ -49,15 +54,33 @@ function seconds() {
 isGameReadyTimerObj = setInterval(isGameReadyTimer, 500);
 
 function isGameReadyTimer () {
-    var xhttpGetStartGame = new XMLHttpRequest();
-    xhttpGetStartGame.onreadystatechange = function() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
 			response = this.responseText;
 			alert(response);
        }
     };
-    xhttp.open("GET", "getId?"+myId, true);
+    xhttp.open("GET", "http://10.34.32.34:80/getId?"+myId, true);
     xhttp.send();
+
+}
+
+function position() {
+    if (myId = 1)
+    {
+        posPlayer1X = 0;
+        posPlayer1Y = 70;
+        posPlayer2X = 630;
+        posPlayer2Y = 630;
+    }
+    else if (myId = 2)
+    {
+        posPlayer1X = 630;
+        posPlayer1Y = 630;
+        posPlayer2X = 0;
+        posPlayer2Y = 70;
+    }
 }
 
 function create() {
@@ -66,8 +89,8 @@ function create() {
     game.add.sprite(0, 0, 'ground');
 
     game.world.setBounds(0, 0, 768, 768);//may be it will not work because of #23
-    player = game.add.sprite(0, 70, 'myhero');
-    player2 = game.add.sprite(630, 630, 'myhero');
+    player = game.add.sprite(posPlayer1X, posPlayer1Y, 'myhero');
+    player2 = game.add.sprite(posPlayer2X, posPlayer2Y, 'myhero');
     player.scale.setTo(0.5,0.5);
     timer = game.add.text(380, 20, second);
     labelTurn = game.add.text(450, 20, turn === true ? 'Ваш ход' : 'Ход соперника');
@@ -79,13 +102,13 @@ function create() {
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.ESC, Phaser.Keyboard.SPACEBAR ]);
     
-    var xhttpGetId = new XMLHttpRequest();
-    xhttpGetId.onreadystatechange = function() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             myId = this.responseText;
        }
     };
-    xhttp.open("GET", "getId", true);
+    xhttp.open("GET", "http://10.34.32.34:80/getId", true);
     xhttp.send();
     
 }
