@@ -11,8 +11,8 @@ var game = new Phaser.Game(768, 768, Phaser.AUTO, '', { preload: preload, create
 function preload() {
     game.load.image('gold', './assets/Gold.png');
     game.load.image('ground', './assets/background.png');
-    game.load.image('myhero', './assets/TuskanMarine.png');
-    game.load.image('myhero2', './assets/TuskanMarineReversed.png');
+    game.load.spritesheet('myhero', './assets/Sprite TS.png', 128, 128);
+    game.load.spritesheet('myhero2', './assets/SpriteTSRed.png', 128, 128);
 }
 
 var player;
@@ -164,48 +164,52 @@ function create() {
     xhttpGetId.send();
     isGameReadyTimerObj = setInterval(isGameReadyTimer, 5000);
     console.log('started timer');
+    player.animations.add('left', [0, 1, 2], 5);
+    player.animations.add('right', [3, 4, 5], 5);
 }
 
 function update() {
-    
+
     function moveTo(x, y, player) {
         if (x>=0 && x<=736) {
-			player.x = x;
-		}
-		if (y>=0 && y<=736) {
-			player.y = y;
-		}
+            player.x = x;
+        }
+        if (y>=0 && y<=736) {
+            player.y = y;
+        }
         fTurnEnd();
     }
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
 
-	if (turn === true) {
-		if (cursors.up.isDown)
-		{
-			moveTo(player.x,player.y-32,player);
-		}
-		else if (cursors.down.isDown)
-		{
-			moveTo(player.x,player.y+32,player);
-		}
-		if (cursors.left.isDown)
-		{
-			moveTo(player.x-32,player.y,player);
-		}
-		else if (cursors.right.isDown)
-		{
-			moveTo(player.x+32,player.y,player);
-		}
-		 
-		if (this.spaceKey.isDown)
-		{
-			turn = false;
-		}
-	}
+    if (turn === true) {
+        if (cursors.up.isDown)
+        {
+            moveTo(player.x,player.y-6,player);
+        }
+        else if (cursors.down.isDown)
+        {
+            moveTo(player.x,player.y+6,player);
+        }
+        if (cursors.left.isDown)
+        {
+            moveTo(player.x-6,player.y,player);
+            player.animations.play('left');
+        }
+        else if (cursors.right.isDown)
+        {
+            moveTo(player.x+6,player.y,player);
+            player.animations.play('right');
+        }
+
+        if (this.spaceKey.isDown)
+        {
+            turn = false;
+        }
+    }
 }
-function endGame() { 
-	localStorage.removeItem('playerId');
+function endGame() {
+    localStorage.removeItem('playerId');
 }
 </script>
 </body>
