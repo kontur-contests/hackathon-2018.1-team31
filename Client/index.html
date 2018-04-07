@@ -37,7 +37,7 @@ function fTurnEnd () {
     } else {
         turn = true;
     }
-    
+
     labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
     second = 10;
 
@@ -100,7 +100,13 @@ function isGameReadyTimer () {
                 } else {
                     secondsTimer = setInterval(seconds, 1000);
                     setInterval(fTurnEnd, 10000);
+                    
                     pos = myPosTmp.pos;
+                    if(pos==1) {
+                        turn = false;
+                    } else {
+                        turn = true;
+                    }
                     position();
                 }
 			}
