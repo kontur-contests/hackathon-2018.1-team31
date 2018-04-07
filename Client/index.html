@@ -142,6 +142,7 @@ function position() {
 function curentPosition() {
     player2.x = posPlayer2X;
     player2.y = posPlayer2Y;
+    checkStartBattle();
 }
 
 function create() {
@@ -201,11 +202,13 @@ function update() {
         if (cursors.up.isDown)
         {
             moveTo(player.x,player.y-32,player);
+            checkStartBattle();
             fTurnEnd();
         }
         else if (cursors.down.isDown)
         {
             moveTo(player.x,player.y+32,player);
+            checkStartBattle();
             fTurnEnd();
         }
         if (cursors.left.isDown)
@@ -229,6 +232,18 @@ function update() {
 }
 function endGame() {
     localStorage.removeItem('playerId');
+}
+function checkStartBattle() {
+	if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 ) {
+			var xhttpSendStartBattle = new XMLHttpRequest();
+			xhttpSendStartBattle.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					response = this.responseText;
+			   }
+			};
+			xhttpSendStartBattle.open("GET", "http://10.34.32.34:80/sendStartBattle", true);
+			xhttpSendStartBattle.send();
+	}
 }
 </script>
 </body>
