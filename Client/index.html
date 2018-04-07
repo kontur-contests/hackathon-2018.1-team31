@@ -92,6 +92,7 @@ function create() {
     player = game.add.sprite(posPlayer1X, posPlayer1Y, 'myhero');
     player2 = game.add.sprite(posPlayer2X, posPlayer2Y, 'myhero');
     player.scale.setTo(0.5,0.5);
+    player2.scale.setTo(0.5,0.5);
     timer = game.add.text(380, 20, second);
     labelTurn = game.add.text(450, 20, turn === true ? 'Ваш ход' : 'Ход соперника');
     game.add.sprite(660, 0, 'gold');
