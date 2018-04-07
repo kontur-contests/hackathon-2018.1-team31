@@ -8,7 +8,10 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "p2": "^0.7.1",
+    "pixi.js": "^4.7.3"
+  },
   "devDependencies": {
     "phaser-ce": "^2.10.3"
   }
