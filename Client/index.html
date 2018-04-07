@@ -53,7 +53,7 @@ function fTurnEnd () {
     
 }
 
-getEnemyCoordTimerObj = setInterval(getEnemyCoordTimer, 1000);
+getEnemyCoordTimerObj = setInterval(getEnemyCoordTimer, 500);
 
 function getEnemyCoordTimer() {
 var xhttpEnemyCoord = new XMLHttpRequest();
@@ -62,7 +62,7 @@ var xhttpEnemyCoord = new XMLHttpRequest();
             enemyCoordTmp = JSON.parse(this.responseText);
             if(posPlayer2X != enemyCoordTmp.x || posPlayer2Y != enemyCoordTmp.y) {
                 turn = true;
-                console.log('fdf');
+                labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
             } 
             posPlayer2X = enemyCoordTmp.x;
             posPlayer2Y = enemyCoordTmp.y;
@@ -95,21 +95,22 @@ function isGameReadyTimer () {
 			if (response.indexOf('game')>0) {
 				clearTimeout(isGameReadyTimerObj);
 				myPosTmp = JSON.parse(this.responseText);
-				if (myPosTmp.status === 'wait') {
-                    return
+                /*secondsTimer = setInterval(seconds, 1000);
+                setInterval(fTurnEnd, 10000);*/
+                
+                pos = myPosTmp.pos;
+                
+                if(pos == 1) {
+                    turn = false;
                 } else {
-                    secondsTimer = setInterval(seconds, 1000);
-                    setInterval(fTurnEnd, 10000);
-                    
-                    pos = myPosTmp.pos;
-                    if(pos==1) {
-                        turn = false;
-                    } else {
-                        turn = true;
-                    }
-                    position();
+                    turn = true;
                 }
-			}
+
+                labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
+                position();
+            } else {
+                labelTurn.setText('Ждем соперника');
+            }
        }
     };
 
