@@ -6,21 +6,42 @@
 </head>
 <body>
 <script>
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(768, 768, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
-game.load.image('gold', '/assets/Gold.png');
-//game.load.image('ground', 'assets/platform.png');
+game.load.image('gold', './assets/Gold.png');
+game.load.image('ground', './assets/background.png');
 //game.load.image('star', 'assets/star.png');
 //game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 }
 
 function create() {
 game.physics.startSystem(Phaser.Physics.ARCADE);
-game.add.sprite(740, 0, 'gold');
+
+game.add.sprite(0, 0, 'ground');
+game.add.sprite(650, 0, 'gold');
 }
 
 function update() {
+	/*
+	player.body.setZeroVelocity();
+    if (cursors.up.isDown)
+    {
+        player.body.moveUp(32)
+    }
+    else if (cursors.down.isDown)
+    {
+        player.body.moveDown(32);
+    }
+    if (cursors.left.isDown)
+    {
+        player.body.velocity.x = -32;
+    }
+    else if (cursors.right.isDown)
+    {
+        player.body.moveRight(32);
+    }
+    */
 }
 </script>
 </body>
