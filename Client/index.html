@@ -74,8 +74,6 @@ function isGameReadyTimer () {
 			response = this.responseText;
 			if (response.indexOf('game')>0) {
 				clearTimeout(isGameReadyTimerObj);
-				//console.log('game started');
-				
 				myPosTmp = JSON.parse(this.responseText);
 				if (myPosTmp.status === 'wait')
                 {
