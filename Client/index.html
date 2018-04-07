@@ -48,6 +48,21 @@ function fTurnEnd () {
     
 }
 
+getEnemyCoordTimerObj = setInterval(getEnemyCoordTimer, 1000);
+function getEnemyCoordTimer() {
+var xhttpSendMyCoord = new XMLHttpRequest();
+    xhttpSendMyCoord.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+			response = this.responseText;
+			if (response.indexOf('game')>0) {
+				clearTimeout(isGameReadyTimerObj);
+			}
+       }
+    };
+    xhttpSendMyCoord.open("GET", "http://10.34.32.34:80/getEnemyCoordinate"+myId.toString(), true);
+    xhttpSendMyCoord.send();	
+}
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
