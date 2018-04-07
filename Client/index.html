@@ -11,10 +11,24 @@ var game = new Phaser.Game(768, 768, Phaser.AUTO, '', { preload: preload, create
 function preload() {
     game.load.image('gold', './assets/Gold.png');
     game.load.image('ground', './assets/background.png');
+    game.load.image('kust', './assets/kust.png');
     game.load.spritesheet('myhero', './assets/Sprite TS.png', 128, 128);
     game.load.spritesheet('myhero2', './assets/SpriteTSRed.png', 128, 128);
 }
-
+let arr = [
+    [1,0,1,0,0,0,1,0,0,0,0,0],
+    [1,0,1,0,1,0,1,0,0,0,0,0],
+    [1,0,1,0,1,0,0,1,0,0,0,0],
+    [1,0,1,0,0,1,0,1,1,1,0,0],
+    [1,0,0,0,0,1,0,0,0,1,0,0],
+    [1,1,1,1,0,1,1,1,0,1,0,0],
+    [0,0,0,0,0,2,1,0,0,1,0,0],
+    [0,0,0,0,0,1,1,0,1,1,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0]
+];
 var player;
 var cursors;
 
@@ -28,7 +42,7 @@ var posPlayer1Y;
 var posPlayer2X;
 var posPlayer2Y;
 var pos;
-
+var platforms;
 
 function fTurnEnd () {
 
@@ -99,7 +113,7 @@ function isGameReadyTimer () {
                 setInterval(getEnemyCoordTimer, 500);
                 pos = myPosTmp.pos;
                 
-                if(pos == 1) {
+                if(pos === 1) {
                     turn = false;
                 } else {
                     turn = true;
@@ -147,8 +161,33 @@ function curentPosition() {
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-
     game.add.sprite(0, 0, 'ground');
+    platforms = game.add.group();
+    platforms.enableBody = true;
+    for(let i = 0; i < 12; i++) {
+        for(let a = 0; a < 12; a++) {
+            if(arr[i][a] === 1) {
+                let ground = platforms.create(a * 64, i * 64, 'kust');
+                ground.body.immovable = true;
+            }
+        }
+    }
+    // var ground = platforms.create(0, game.world.height - 64, 'ground');
+
+    //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
+    /*ground.scale.setTo(2, 2);
+
+    //  This stops it from falling away when you jump on it
+    ground.body.immovable = true;
+
+    //  Now let's create two ledges
+    var ledge = platforms.create(400, 400, 'ground');*/
+
+    /*ledge.body.immovable = true;
+
+    ledge = platforms.create(-150, 250, 'ground');
+
+    ledge.body.immovable = true;*/
 
     game.world.setBounds(0, 0, 768, 768);
 
@@ -234,20 +273,18 @@ function endGame() {
     localStorage.removeItem('playerId');
 }
 function checkStartBattle() {
-	var battleSent = false;
-	
-	if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 && battleSent===true) {
-			var xhttpSendStartBattle = new XMLHttpRequest();
-			xhttpSendStartBattle.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					response = this.responseText;
-			   }
-			};
-			xhttpSendStartBattle.open("GET", "http://10.34.32.34:80/sendStartBattle", true);
-			xhttpSendStartBattle.send();
-			battleSent = true;
-	}
+    if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 ) {
+            var xhttpSendStartBattle = new XMLHttpRequest();
+            xhttpSendStartBattle.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    response = this.responseText;
+               }
+            };
+            xhttpSendStartBattle.open("GET", "http://10.34.32.34:80/sendStartBattle", true);
+            xhttpSendStartBattle.send();
+    }
 }
+
 </script>
 </body>
 </html>
