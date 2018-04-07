@@ -18,6 +18,7 @@ function preload() {
 var player;
 var cursors;
 
+var timer;
 var turn = true;
 var second = 10;
 var myId;
@@ -25,11 +26,16 @@ var posPlayer1X;
 var posPlayer1Y;
 var posPlayer2X;
 var posPlayer2Y;
+var pos;
 
 TurnEndTimer = setInterval(fTurnEnd, 10000);
 
 function fTurnEnd () {
-    turn = true;
+    if(turn == true) {
+        turn = false;
+    } else {
+        turn = true;
+    }
     labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
     second = 10;
 
@@ -46,17 +52,21 @@ function fTurnEnd () {
 }
 
 getEnemyCoordTimerObj = setInterval(getEnemyCoordTimer, 1000);
+
 function getEnemyCoordTimer() {
 var xhttpEnemyCoord = new XMLHttpRequest();
     xhttpEnemyCoord.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             enemyCoordTmp = JSON.parse(this.responseText);
+            if(posPlayer2X != enemyCoordTmp.x || posPlayer2Y != enemyCoordTmp.y) {
+                turn = true;
+            } 
             posPlayer2X = enemyCoordTmp.x;
             posPlayer2Y = enemyCoordTmp.y;
             curentPosition();
         }
     };
-    xhttpEnemyCoord.open("GET", "http://10.34.32.34:80/getEnemyCoordinate?id="+myId.toString(), true);
+    xhttpEnemyCoord.open("GET", "http://10.34.32.34:80/getEnemyCoordinate?id="+myId, true);
     xhttpEnemyCoord.send();	
 }
 
@@ -73,9 +83,6 @@ function seconds() {
     second = second - 1;
     timer.setText(second);
 }
-var pos;
-
-
 
 function isGameReadyTimer () {
 	
@@ -83,53 +90,49 @@ function isGameReadyTimer () {
     
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-			response = this.responseText;
+            response = this.responseText;
 			if (response.indexOf('game')>0) {
 				clearTimeout(isGameReadyTimerObj);
 				myPosTmp = JSON.parse(this.responseText);
-				if (myPosTmp.status === 'wait')
-                {
+				if (myPosTmp.status === 'wait') {
                     return
-                }
-                else
-                {
+                } else {
                     pos = myPosTmp.pos;
                     position();
                 }
 			}
        }
     };
+
     xhttp.open("GET", "http://10.34.32.34:80/getStartGame?id="+myId, true);
     xhttp.send();
 
 }
 
 function position() {
-    if (pos === 1)
-    {
-		posPlayer1X = 0;
-        posPlayer1Y = 64;
-        posPlayer2X = 640;
-        posPlayer2Y = 640;
-    }
-    else if (pos === 2)
-    {
-        posPlayer1X = 640;
-        posPlayer1Y = 640;
-        posPlayer2X = 0;
-        posPlayer2Y = 64;
-    }
-    pos = -1;
-    player.x = posPlayer1X;
-    player.y = posPlayer1Y;
-    player2.x = posPlayer2X;
-    player2.y = posPlayer2Y;
+    //if(pos != -1) {
+        if (pos === 1) {
+            posPlayer1X = 0;
+            posPlayer1Y = 64;
+            posPlayer2X = 640;
+            posPlayer2Y = 640;
+        } else if (pos === 2) {
+            posPlayer1X = 640;
+            posPlayer1Y = 640;
+            posPlayer2X = 0;
+            posPlayer2Y = 64;
+        }
+        pos = -1;
+        player.x = posPlayer1X;
+        player.y = posPlayer1Y;
+        player2.x = posPlayer2X;
+        player2.y = posPlayer2Y;
+    //}
 }
 
 function curentPosition() {
     player2.x = posPlayer2X;
     player2.y = posPlayer2Y;
-    checkStartBattle();
 }
 
 function create() {
@@ -137,11 +140,14 @@ function create() {
 
     game.add.sprite(0, 0, 'ground');
 
-    game.world.setBounds(0, 0, 768, 768);//may be it will not work because of #23
+    game.world.setBounds(0, 0, 768, 768);
+
     player = game.add.sprite(-4000, -4000, 'myhero');
     player2 = game.add.sprite(-4000, -4000, 'myhero2');
+
     player.scale.setTo(0.25,0.25);
     player2.scale.setTo(0.25,0.25);
+
     timer = game.add.text(380, 20, second);
     labelTurn = game.add.text(450, 20, turn === true ? 'Ваш ход' : 'Ход соперника');
     game.add.sprite(660, 0, 'gold');
@@ -159,26 +165,25 @@ function create() {
             myId = myIdTmp.id;
        }
     };
+
     xhttpGetId.open("GET", "http://10.34.32.34:80/getId", true);
     xhttpGetId.send();
-    isGameReadyTimerObj = setInterval(isGameReadyTimer, 5000);
-    console.log('started timer');
+
+    isGameReadyTimerObj = setInterval(isGameReadyTimer, 1000);
+
     player.animations.add('left', [0, 1, 2], 5);
     player.animations.add('right', [3, 4, 5], 5);
 }
 
 function update() {
+    // делаешь ты 
     function moveTo(x, y, player) {
         if (x>=0 && x<=736) {
-			player.x = x;
-			checkStartBattle();
-			fTurnEnd();
-		}
-		if (y>=0 && y<=736) {
-			player.y = y;
-			checkStartBattle();
-			fTurnEnd();
-		}
+            player.x = x;
+        }
+        if (y>=0 && y<=736) {
+            player.y = y;
+        }
     }
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
@@ -187,20 +192,24 @@ function update() {
         if (cursors.up.isDown)
         {
             moveTo(player.x,player.y-6,player);
+            fTurnEnd();
         }
         else if (cursors.down.isDown)
         {
             moveTo(player.x,player.y+6,player);
+            fTurnEnd();
         }
         if (cursors.left.isDown)
         {
             moveTo(player.x-6,player.y,player);
-            player.animations.play('left');
+            //player.animations.play('left');
+            fTurnEnd();
         }
         else if (cursors.right.isDown)
         {
             moveTo(player.x+6,player.y,player);
-            player.animations.play('right');
+            //player.animations.play('right');
+            fTurnEnd();
         }
 
         if (this.spaceKey.isDown)
@@ -208,18 +217,6 @@ function update() {
             turn = false;
         }
     }
-}
-function checkStartBattle() {
-	if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 ) {
-			var xhttpSendStartBattle = new XMLHttpRequest();
-			xhttpSendStartBattle.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					response = this.responseText;
-			   }
-			};
-			xhttpSendStartBattle.open("GET", "http://10.34.32.34:80/sendStartBattle", true);
-			xhttpSendStartBattle.send();
-	}
 }
 function endGame() {
     localStorage.removeItem('playerId');
