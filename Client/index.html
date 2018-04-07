@@ -70,7 +70,8 @@ function isGameReadyTimer () {
 			
        }
     };
-    xhttp.open("GET", "http://10.34.32.34:80/getStartGame?id="+myId, true);
+    console.log(myId, typeof myId);
+    xhttp.open("GET", "http://10.34.32.34:80/getStartGame?id="+myId.toString(), true);
     xhttp.send();
 
 }
@@ -115,7 +116,8 @@ function create() {
     var xhttpGetId = new XMLHttpRequest();
     xhttpGetId.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            myId = this.responseText;
+            myId = JSON.parse(this.responseText["id"]);
+            
        }
     };
     xhttpGetId.open("GET", "http://10.34.32.34:80/getId", true);
