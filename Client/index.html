@@ -36,10 +36,6 @@ function fTurnEnd () {
     xhttpSendMyCoord.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
 			response = this.responseText;
-			if (response.indexOf('game')>0) {
-				clearTimeout(isGameReadyTimerObj);
-			}
-
        }
     };
     xhttpSendMyCoord.open("GET", "http://10.34.32.34:80/setMyCoordinate?id="+myId.toString()+
@@ -53,10 +49,13 @@ function getEnemyCoordTimer() {
 var xhttpEnemyCoord = new XMLHttpRequest();
     xhttpEnemyCoord.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-			response = this.responseText;
-		}
+            enemyCoordTmp = JSON.parse(this.responseText);
+            posPlayer2X = enemyCoordTmp.x;
+            posPlayer2Y = enemyCoordTmp.y;
+            curentPosition();
+        }
     };
-    xhttpEnemyCoord.open("GET", "http://10.34.32.34:80/getEnemyCoordinate"+myId.toString(), true);
+    xhttpEnemyCoord.open("GET", "http://10.34.32.34:80/getEnemyCoordinate?id="+myId.toString(), true);
     xhttpEnemyCoord.send();	
 }
 
@@ -99,32 +98,38 @@ function isGameReadyTimer () {
 			}
        }
     };
-    xhttp.open("GET", "http://10.34.32.34:80/getStartGame?id="+myId.toString(), true);
+    xhttp.open("GET", "http://10.34.32.34:80/getStartGame?id="+myId, true);
     xhttp.send();
 
 }
 
 function position() {
-	console.log('pos is '+pos);
-    if (pos = 1)
+    if (pos === 1)
     {
 		posPlayer1X = 0;
         posPlayer1Y = 70;
         posPlayer2X = 630;
         posPlayer2Y = 630;
     }
-    else if (pos = 2)
+    else if (pos === 2)
     {
         posPlayer1X = 630;
         posPlayer1Y = 630;
         posPlayer2X = 0;
         posPlayer2Y = 70;
     }
+    pos = -1;
     player.x = posPlayer1X;
     player.y = posPlayer1Y;
     player2.x = posPlayer2X;
     player2.y = posPlayer2Y;
-    
+}
+
+function curentPosition() {
+    player.x = posPlayer1X;
+    player.y = posPlayer1Y;
+    player2.x = posPlayer2X;
+    player2.y = posPlayer2Y;
 }
 
 function create() {
