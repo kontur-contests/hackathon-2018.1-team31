@@ -62,24 +62,30 @@ function isGameReadyTimer () {
         if (this.readyState == 4 && this.status == 200) {
 			response = this.responseText;
 			if (response.indexOf('game')>0) {
-				clearTimeout(isGameReadyTimer);
+				clearTimeout(isGameReadyTimerObj);
+				//console.log('game started');
+				
+				myPosTmp = JSON.parse(this.responseText);
+				pos = myPosTmp.pos;
+				position();
 			}
-			console.log('response is '+response);
-			pos = JSON.parse(response);
-			console.log('pos is '+pos);
+			//console.log('response is '+response);
+			//pos = JSON.parse(response);
+			//console.log('pos is '+pos);
 			
        }
     };
-    console.log(myId, typeof myId);
+    //console.log(myId, typeof myId);
     xhttp.open("GET", "http://10.34.32.34:80/getStartGame?id="+myId.toString(), true);
     xhttp.send();
 
 }
 
 function position() {
+	console.log('pos is '+pos);
     if (pos = 1)
     {
-        posPlayer1X = 0;
+		posPlayer1X = 0;
         posPlayer1Y = 70;
         posPlayer2X = 630;
         posPlayer2Y = 630;
@@ -91,6 +97,11 @@ function position() {
         posPlayer2X = 0;
         posPlayer2Y = 70;
     }
+    player.x = posPlayer1X;
+    player.y = posPlayer1Y;
+    player2.x = posPlayer2X;
+    player2.y = posPlayer2Y;
+    
 }
 
 function create() {
@@ -99,8 +110,8 @@ function create() {
     game.add.sprite(0, 0, 'ground');
 
     game.world.setBounds(0, 0, 768, 768);//may be it will not work because of #23
-    player = game.add.sprite(posPlayer1X, posPlayer1Y, 'myhero');
-    player2 = game.add.sprite(posPlayer2X, posPlayer2Y, 'myhero');
+    player = game.add.sprite(-4000, -4000, 'myhero');
+    player2 = game.add.sprite(-4000, -4000, 'myhero');
     player.scale.setTo(0.5,0.5);
     player2.scale.setTo(0.5,0.5);
     timer = game.add.text(380, 20, second);
@@ -123,6 +134,7 @@ function create() {
     xhttpGetId.open("GET", "http://10.34.32.34:80/getId", true);
     xhttpGetId.send();
     isGameReadyTimerObj = setInterval(isGameReadyTimer, 5000);
+    console.log('started timer');
 }
 
 function update() {
