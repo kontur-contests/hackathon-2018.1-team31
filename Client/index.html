@@ -18,6 +18,12 @@ game.load.image('myhero', './assets/Tuskan-Marine.png');
 var player;
 var cursors;
 var turn = true;
+TurnEndTimer = setTimeout(fTurnEnd, 5000);
+
+function fTurnEnd () {
+	turn = false;
+	//alert(turn);
+}
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
