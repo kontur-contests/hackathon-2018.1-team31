@@ -12,22 +12,23 @@ function preload() {
     game.load.image('gold', './assets/Gold.png');
     game.load.image('ground', './assets/background.png');
     game.load.image('kust', './assets/kust.png');
+    game.load.image('mine', './assets/Miner.png');
     game.load.spritesheet('myhero', './assets/Sprite TS.png', 128, 128);
     game.load.spritesheet('myhero2', './assets/SpriteTSRed.png', 128, 128);
 }
 let arr = [
-    [1,0,1,0,0,0,1,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0],
     [1,0,1,0,1,0,1,0,0,0,0,0],
     [1,0,1,0,1,0,0,1,0,0,0,0],
-    [1,0,1,0,0,1,0,1,1,1,0,0],
-    [1,0,0,0,0,1,0,0,0,1,0,0],
-    [1,1,1,1,0,1,1,1,0,1,0,0],
-    [0,0,0,0,0,2,1,0,0,1,0,0],
-    [0,0,0,0,0,1,1,0,1,1,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0]
+    [1,0,1,1,0,0,0,0,1,1,0,0],
+    [1,0,0,0,0,1,1,0,1,1,0,0],
+    [1,1,1,1,1,2,0,0,1,1,0,0],
+    [0,0,0,1,1,0,0,1,0,1,0,0],
+    [0,0,0,1,0,1,0,0,1,1,0,0],
+    [0,0,0,1,0,0,0,1,1,1,0,0],
+    [0,1,0,1,0,1,1,1,0,1,0,0],
+    [0,1,0,1,0,1,0,0,0,1,1,1],
+    [0,0,0,0,0,0,0,1,0,0,0,0]
 ];
 var player;
 var cursors;
@@ -168,6 +169,10 @@ function create() {
         for(let a = 0; a < 12; a++) {
             if(arr[i][a] === 1) {
                 let ground = platforms.create(a * 64, i * 64, 'kust');
+                ground.body.immovable = true;
+            }
+            if(arr[i][a] === 2) {
+                let ground = platforms.create(a * 64, i * 64, 'mine');
                 ground.body.immovable = true;
             }
         }
