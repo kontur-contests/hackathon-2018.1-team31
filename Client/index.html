@@ -116,8 +116,8 @@ function create() {
     var xhttpGetId = new XMLHttpRequest();
     xhttpGetId.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            myId = JSON.parse(this.responseText["id"]);
-            
+            myIdTmp = JSON.parse(this.responseText);
+            myId = myIdTmp.id;
        }
     };
     xhttpGetId.open("GET", "http://10.34.32.34:80/getId", true);
