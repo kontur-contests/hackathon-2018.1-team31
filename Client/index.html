@@ -31,6 +31,32 @@ function fTurnEnd () {
     turn = false;
     labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
     second = 10;
+
+    
+    var xhttpSendMyCoord = new XMLHttpRequest();
+    xhttpSendMyCoord.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+			response = this.responseText;
+			if (response.indexOf('game')>0) {
+				clearTimeout(isGameReadyTimerObj);
+				//console.log('game started');
+				
+				//myPosTmp = JSON.parse(this.responseText);
+				//pos = myPosTmp.pos;
+				//position();
+			}
+			//console.log('response is '+response);
+			//pos = JSON.parse(response);
+			//console.log('pos is '+pos);
+			
+       }
+    };
+    //console.log(myId, typeof myId);
+    //setMyCoordinate?id=2&x=2&y=25
+    xhttpSendMyCoord.open("GET", "http://10.34.32.34:80/setMyCoordinate?id="+myId.toString()+
+		"&x="+(player.x).toString()+"&y="+(player.y).toString(), true);
+    xhttpSendMyCoord.send();
+    
 }
 
 function getRandomInt(max) {
