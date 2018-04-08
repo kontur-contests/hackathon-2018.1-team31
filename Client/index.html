@@ -192,7 +192,6 @@ function position() {
 function curentPosition() {
     player2.x = posPlayer2X;
     player2.y = posPlayer2Y;
-    checkStartBattle();
 }
 
 function create() {
@@ -234,8 +233,8 @@ function create() {
     player = game.add.sprite(-4000, -4000, 'myhero');
     player2 = game.add.sprite(-4000, -4000, 'myhero2');
 
-    player.scale.setTo(0.41,0.41);
-    player2.scale.setTo(0.41,0.41);
+    player.scale.setTo(0.4,0.4);
+    player2.scale.setTo(0.4,0.4);
 
     labelTurn = game.add.text(312, 15, turn === true ? 'Ваш ход' : 'Ход соперника');
 
@@ -301,8 +300,8 @@ function update() {
         else if (cursors.right.isDown)
         {
             moveTo(player.x+32,player.y,player);
-            checkStartBattle();
-            //checkStar();
+            //checkStartBattle();
+            checkStar();
             fTurnEnd();
         }
 
@@ -317,20 +316,16 @@ function endGame() {
 }
 
 function checkStar() {
-    if (Math.abs(player.x-6*64)<=128 && Math.abs(player.y - 6*64)<=128) {
+    if (Math.abs(player.x-6*64)<=50 && Math.abs(player.y - 6*64)<=50) {
             var xhttpSendStar = new XMLHttpRequest();
             xhttpSendStar.onreadystatechange = function() {
                 if (this.readyState === 4 || this.status === 200) {
                     response = JSON.parse(this.responseText);
-                    type = response.type;
-                    b = response.b;
-                    m = response.m;
-                    p = response.p;
                     win = response.win;
                     floor = new Phaser.Rectangle(0, 100, 500, 300);
                     game.debug.geom(floor, '#491b0c');
-                    labelResult.setText(win === true ? `Ты выиграл!\nВойска соперника: \n${b} Берсерк\n${m}Пехотинец\n${p} Маг`
-                        : `Ты проиграл :(\nВойска соперника: \n${b} Берсерк\n${m}Пехотинец\n${p} Маг`);
+                    labelResult.setText(win === true ? `Ты выиграл!\nВойска соперника: \n${response[1].b} Берсерк\n${response[1].p}Пехотинец\n${response[1].m} Маг`
+                        : `Ты проиграл :(\nВойска соперника: \n${response[1].b} Берсерк\n${response[1].p}Пехотинец\n${response[1].m} Маг`);
                 }
             };
             xhttpSendStar.open("GET", apiUrl+"sendStar?id="+myId, true);
