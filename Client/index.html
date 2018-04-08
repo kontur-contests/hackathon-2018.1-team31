@@ -15,10 +15,14 @@ function preload() {
     game.load.image('ground', './assets/background.png');
     game.load.image('kust', './assets/kust.png');
     game.load.image('mine', './assets/Miner.png');
+    game.load.image('bers', './assets/Berserk.gif');
+    game.load.image('marine', './assets/Tushkan-Marine.gif');
+    game.load.image('priest', './assets/TehnoPriest.gif');
     game.load.spritesheet('sky', './assets/SkyInLine.png', 768, 64);
     game.load.spritesheet('myhero', './assets/Sprite TS.png', 128, 128);
     game.load.spritesheet('myhero2', './assets/SpriteTSRed.png', 128, 128);
 }
+
 let arr = [
     [0,0,0,0,0,0,0,0,0,0,0,0],
     [1,0,1,0,1,0,1,0,0,0,0,0],
@@ -30,8 +34,8 @@ let arr = [
     [0,0,0,1,0,1,0,0,1,1,0,0],
     [0,0,0,1,0,0,0,1,1,1,0,0],
     [0,1,0,1,0,1,1,1,0,1,0,0],
-    [0,1,0,1,0,1,0,0,0,1,1,1],
-    [0,0,0,0,0,0,0,1,0,0,0,0]
+    [0,1,0,0,0,1,0,0,0,1,1,1],
+    [0,0,0,1,0,0,0,1,0,0,0,0]
 ];
 var player;
 var cursors;
@@ -44,6 +48,11 @@ var posPlayer2Y;
 var pos;
 var platforms;
 var sky;
+var b = 1;
+var m = 1;
+var p = 1;
+var type;
+var floor;
 
 function fTurnEnd () {
 
@@ -87,8 +96,45 @@ var xhttpEnemyCoord = new XMLHttpRequest();
     xhttpEnemyCoord.send();	
 }
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
+function getRandomInt() {
+    return Math.floor(Math.random() * Math.floor(3));
+}
+
+function getRandomEnemy() {
+    switch (getRandomInt()) {
+        case 0:
+            b = b + getRandomInt();
+            txtB();
+            break;
+        case 1:
+            m = m + getRandomInt();
+            txtM();
+            break;
+        case 2:
+            p = p + getRandomInt();
+            txtP();
+            break;
+    }
+}
+
+
+
+function txtB () {
+    bersTxt.setText('x'+b);
+}
+
+function txtM () {
+    marineTxt.setText('x'+m);
+}
+
+function txtP () {
+    priestTxt.setText('x'+p);
+}
+
+function sentUnits() {
+    var xhttpEnemyCoord = new XMLHttpRequest();
+    xhttpEnemyCoord.open("GET", apiUrl+"sentArmy?id="+myId+'&b='+b+'&m='+m+'&p='+p, true);
+    xhttpEnemyCoord.send();
 }
 
 function isGameReadyTimer () {
@@ -171,6 +217,18 @@ function create() {
     sky.body.immovable = true;
     sky.scale.setTo(1, 2);
 
+    let bers = game.add.image(0, 0, 'bers');
+    bers.scale.setTo(0.5,0.5);
+    bersTxt = game.add.text(67, 15, 'x'+b);
+
+    let marine = game.add.image(90, 0, 'marine');
+    marine.scale.setTo(0.5,0.5);
+    marineTxt = game.add.text(160, 15, 'x'+m);
+
+    let priest = game.add.image(190, 0, 'priest');
+    priest.scale.setTo(0.5,0.5);
+    priestTxt = game.add.text(250, 15, 'x'+p);
+
     game.world.setBounds(0, 0, 768, 768);
 
     player = game.add.sprite(-4000, -4000, 'myhero');
@@ -198,6 +256,8 @@ function create() {
     xhttpGetId.open("GET", apiUrl+"getId", true);
     xhttpGetId.send();
 
+    labelResult = game.add.text(120, 200, '');
+
     isGameReadyTimerObj = setInterval(isGameReadyTimer, 1000);
 
     player.animations.add('left', [0, 1, 2], 5);
@@ -208,6 +268,8 @@ function update() {
     game.physics.arcade.collide(player, platforms);
     function moveTo(x, y, player) {
         game.physics.arcade.moveToXY(player, x, y, 500, 10);
+        getRandomEnemy();
+        sentUnits();
     }
 
 
@@ -218,21 +280,21 @@ function update() {
         if (cursors.up.isDown)
         {
             moveTo(player.x,player.y-32,player);
-            checkStartBattle();
+            //checkStartBattle();
             checkStar();
             fTurnEnd();
         }
         else if (cursors.down.isDown)
         {
             moveTo(player.x,player.y+32,player);
-            checkStartBattle();
+            //checkStartBattle();
             checkStar();
             fTurnEnd();
         }
         if (cursors.left.isDown)
         {
             moveTo(player.x-32,player.y,player);
-            checkStartBattle();
+            //checkStartBattle();
             checkStar();
             fTurnEnd();
         }
@@ -240,7 +302,7 @@ function update() {
         {
             moveTo(player.x+32,player.y,player);
             checkStartBattle();
-            checkStar();
+            //checkStar();
             fTurnEnd();
         }
 
@@ -253,19 +315,31 @@ function update() {
 function endGame() {
     localStorage.removeItem('playerId');
 }
+
 function checkStar() {
     if (Math.abs(player.x-6*64)<=128 && Math.abs(player.y - 6*64)<=128) {
             var xhttpSendStar = new XMLHttpRequest();
             xhttpSendStar.onreadystatechange = function() {
                 if (this.readyState === 4 || this.status === 200) {
-                    response = this.responseText;
-               }
+                    response = JSON.parse(this.responseText);
+                    type = response.type;
+                    b = response.b;
+                    m = response.m;
+                    p = response.p;
+                    win = response.win;
+                    floor = new Phaser.Rectangle(0, 100, 500, 300);
+                    game.debug.geom(floor, '#491b0c');
+                    labelResult.setText(win === true ? `Ты выиграл!\nВойска соперника: \n${b} Берсерк\n${m}Пехотинец\n${p} Маг`
+                        : `Ты проиграл :(\nВойска соперника: \n${b} Берсерк\n${m}Пехотинец\n${p} Маг`);
+                }
             };
-            xhttpSendStar.open("GET", apiUrl+"sendStar", true);
+            xhttpSendStar.open("GET", apiUrl+"sendStar?id="+myId, true);
             xhttpSendStar.send();
+        game.debug.geom(floor, '#ccc');
     }
 }
-function checkStartBattle() {
+
+/*function checkStartBattle() {
     if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 ) {
             var xhttpSendStartBattle = new XMLHttpRequest();
             xhttpSendStartBattle.onreadystatechange = function() {
@@ -276,7 +350,7 @@ function checkStartBattle() {
             xhttpSendStartBattle.open("GET", apiUrl+"sendStartBattle", true);
             xhttpSendStartBattle.send();
     }
-}
+}*/
 
 </script>
 </body>
