@@ -8,11 +8,14 @@
 <script>
 var game = new Phaser.Game(768, 768, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
+var apiUrl = "http://10.34.32.34/";
+
 function preload() {
     game.load.image('gold', './assets/Gold.png');
     game.load.image('ground', './assets/background.png');
     game.load.image('kust', './assets/kust.png');
     game.load.image('mine', './assets/Miner.png');
+    game.load.spritesheet('sky', './assets/SkyInLine.png', 768, 64);
     game.load.spritesheet('myhero', './assets/Sprite TS.png', 128, 128);
     game.load.spritesheet('myhero2', './assets/SpriteTSRed.png', 128, 128);
 }
@@ -32,11 +35,7 @@ let arr = [
 ];
 var player;
 var cursors;
-
-var secondsTimer;
-var timer; 
 var turn = true;
-var second = 10;
 var myId;
 var posPlayer1X;
 var posPlayer1Y;
@@ -44,6 +43,7 @@ var posPlayer2X;
 var posPlayer2Y;
 var pos;
 var platforms;
+var sky;
 
 function fTurnEnd () {
 
@@ -54,7 +54,6 @@ function fTurnEnd () {
     }
 
     labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
-    second = 10;
 
     var xhttpSendMyCoord = new XMLHttpRequest();
     xhttpSendMyCoord.onreadystatechange = function() {
@@ -62,7 +61,7 @@ function fTurnEnd () {
 			response = this.responseText;
        }
     };
-    xhttpSendMyCoord.open("GET", "http://10.34.32.34:80/setMyCoordinate?id="+myId.toString()+
+    xhttpSendMyCoord.open("GET", apiUrl+"setMyCoordinate?id="+myId.toString()+
 		"&x="+(player.x).toString()+"&y="+(player.y).toString(), true);
     xhttpSendMyCoord.send();
     
@@ -84,20 +83,12 @@ var xhttpEnemyCoord = new XMLHttpRequest();
             curentPosition();
         }
     };
-    xhttpEnemyCoord.open("GET", "http://10.34.32.34:80/getEnemyCoordinate?id="+myId, true);
+    xhttpEnemyCoord.open("GET", apiUrl+"getEnemyCoordinate?id="+myId, true);
     xhttpEnemyCoord.send();	
 }
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
-}
-
-function seconds() {
-    if (second === 1) {
-        clearTimeout(secondsTimer);
-    }
-    second = second - 1;
-    timer.setText(second);
 }
 
 function isGameReadyTimer () {
@@ -128,13 +119,12 @@ function isGameReadyTimer () {
        }
     };
 
-    xhttp.open("GET", "http://10.34.32.34:80/getStartGame?id="+myId, true);
+    xhttp.open("GET", apiUrl+"getStartGame?id="+myId, true);
     xhttp.send();
 
 }
 
 function position() {
-    //if(pos != -1) {
         if (pos === 1) {
             posPlayer1X = 64;
             posPlayer1Y = 64;
@@ -151,10 +141,7 @@ function position() {
         player.y = posPlayer1Y;
         player2.x = posPlayer2X;
         player2.y = posPlayer2Y;
-    //}
 }
-//
-//
 
 function curentPosition() {
     player2.x = posPlayer2X;
@@ -180,6 +167,10 @@ function create() {
         }
     }
 
+    let sky = platforms.create(0, 0, 'sky');
+    sky.body.immovable = true;
+    sky.scale.setTo(1, 2);
+
     game.world.setBounds(0, 0, 768, 768);
 
     player = game.add.sprite(-4000, -4000, 'myhero');
@@ -188,9 +179,7 @@ function create() {
     player.scale.setTo(0.41,0.41);
     player2.scale.setTo(0.41,0.41);
 
-    timer = game.add.text(380, 20, second);
-    labelTurn = game.add.text(450, 20, turn === true ? 'Ваш ход' : 'Ход соперника');
-    game.add.sprite(660, 0, 'gold');
+    labelTurn = game.add.text(312, 15, turn === true ? 'Ваш ход' : 'Ход соперника');
 
     game.physics.arcade.enable(player);
     cursors = game.input.keyboard.createCursorKeys();
@@ -206,7 +195,7 @@ function create() {
        }
     };
 
-    xhttpGetId.open("GET", "http://10.34.32.34:80/getId", true);
+    xhttpGetId.open("GET", apiUrl+"getId", true);
     xhttpGetId.send();
 
     isGameReadyTimerObj = setInterval(isGameReadyTimer, 1000);
@@ -217,10 +206,10 @@ function create() {
 
 function update() {
     game.physics.arcade.collide(player, platforms);
-    // делаешь ты 
     function moveTo(x, y, player) {
         game.physics.arcade.moveToXY(player, x, y, 500, 10);
     }
+
 
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
@@ -272,7 +261,7 @@ function checkStar() {
                     response = this.responseText;
                }
             };
-            xhttpSendStar.open("GET", "http://10.34.32.34:80/sendStar", true);
+            xhttpSendStar.open("GET", apiUrl+"sendStar", true);
             xhttpSendStar.send();
     }
 }
@@ -284,7 +273,7 @@ function checkStartBattle() {
                     response = this.responseText;
                }
             };
-            xhttpSendStartBattle.open("GET", "http://10.34.32.34:80/sendStartBattle", true);
+            xhttpSendStartBattle.open("GET", apiUrl+"sendStartBattle", true);
             xhttpSendStartBattle.send();
     }
 }
