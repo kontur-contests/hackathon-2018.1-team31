@@ -265,10 +265,10 @@ function endGame() {
     localStorage.removeItem('playerId');
 }
 function checkStar() {
-    if (Math.abs(player.x-6*64)<=64 && Math.abs(player.y - 6*64)<=64) {
+    if (Math.abs(player.x-6*64)<=128 && Math.abs(player.y - 6*64)<=128) {
             var xhttpSendStar = new XMLHttpRequest();
             xhttpSendStar.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
+                if (this.readyState === 4 || this.status === 200) {
                     response = this.responseText;
                }
             };
