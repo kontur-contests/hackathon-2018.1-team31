@@ -76,6 +76,7 @@ http.createServer(function (req, res) {
       }
       var enemy = arrPlayers[arrPlayers[q.query.id].enemy];
       var respond = {x:enemy.coordinateX,y:enemy.coordinateY};
+      respond.change = arrPlayers[q.query.id].change;
       res.writeHead(200, {'Access-Control-Allow-Origin': '*'});
       res.end(JSON.stringify(respond));
       break;
@@ -83,6 +84,11 @@ http.createServer(function (req, res) {
     case '/setMyCoordinate': // setMyCoordinate?id=2&x=2&y=25
       if(arrPlayers[q.query.id]==undefined) {
         return;
+      }
+      if(arrPlayers[q.query.id].coordinateX === q.query.x && arrPlayers[q.query.id].coordinateY === q.query.y) {
+        arrPlayers[q.query.id].change = false;
+      } else {
+        arrPlayers[q.query.id].change = true;
       }
       arrPlayers[q.query.id].coordinateX = q.query.x;
       arrPlayers[q.query.id].coordinateY = q.query.y;
