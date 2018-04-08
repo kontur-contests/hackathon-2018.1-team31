@@ -47,7 +47,7 @@ var platforms;
 
 function fTurnEnd () {
 
-    if(turn == true) {
+    if (turn === true) {
         turn = false;
     } else {
         turn = true;
@@ -58,7 +58,7 @@ function fTurnEnd () {
 
     var xhttpSendMyCoord = new XMLHttpRequest();
     xhttpSendMyCoord.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState === 4 || this.status === 200) {
 			response = this.responseText;
        }
     };
@@ -71,12 +71,14 @@ function fTurnEnd () {
 function getEnemyCoordTimer() {
 var xhttpEnemyCoord = new XMLHttpRequest();
     xhttpEnemyCoord.onreadystatechange = function() {
-        if (this.readyState == 4 || this.status == 200) {
+        if (this.readyState === 4 || this.status === 200) {
             enemyCoordTmp = JSON.parse(this.responseText);
-            if(posPlayer2X != enemyCoordTmp.x || posPlayer2Y != enemyCoordTmp.y) {
+            if((posPlayer2X !== enemyCoordTmp.x || posPlayer2Y !== enemyCoordTmp.y)
+                || (enemyCoordTmp.change === false && enemyCoordTmp.change !== undefined) && (posPlayer2X === enemyCoordTmp.x && posPlayer2Y === enemyCoordTmp.y))
+            {
                 turn = true;
                 labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
-            } 
+            }
             posPlayer2X = enemyCoordTmp.x;
             posPlayer2Y = enemyCoordTmp.y;
             curentPosition();
@@ -103,13 +105,11 @@ function isGameReadyTimer () {
     var xhttp = new XMLHttpRequest();
     
     xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 || this.status == 200) {
+        if (this.readyState === 4 || this.status === 200) {
             response = this.responseText;
 			if (response.indexOf('game')>0) {
 				clearTimeout(isGameReadyTimerObj);
 				myPosTmp = JSON.parse(this.responseText);
-                /*secondsTimer = setInterval(seconds, 1000);
-                setInterval(fTurnEnd, 10000);*/
 
                 setInterval(getEnemyCoordTimer, 500);
                 pos = myPosTmp.pos;
@@ -136,14 +136,14 @@ function isGameReadyTimer () {
 function position() {
     //if(pos != -1) {
         if (pos === 1) {
-            posPlayer1X = 0;
+            posPlayer1X = 64;
             posPlayer1Y = 64;
-            posPlayer2X = 640;
-            posPlayer2Y = 640;
+            posPlayer2X = 704;
+            posPlayer2Y = 704;
         } else if (pos === 2) {
-            posPlayer1X = 640;
-            posPlayer1Y = 640;
-            posPlayer2X = 0;
+            posPlayer1X = 704;
+            posPlayer1Y = 704;
+            posPlayer2X = 64;
             posPlayer2Y = 64;
         }
         pos = -1;
@@ -177,30 +177,14 @@ function create() {
             }
         }
     }
-    // var ground = platforms.create(0, game.world.height - 64, 'ground');
-
-    //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-    /*ground.scale.setTo(2, 2);
-
-    //  This stops it from falling away when you jump on it
-    ground.body.immovable = true;
-
-    //  Now let's create two ledges
-    var ledge = platforms.create(400, 400, 'ground');*/
-
-    /*ledge.body.immovable = true;
-
-    ledge = platforms.create(-150, 250, 'ground');
-
-    ledge.body.immovable = true;*/
 
     game.world.setBounds(0, 0, 768, 768);
 
     player = game.add.sprite(-4000, -4000, 'myhero');
     player2 = game.add.sprite(-4000, -4000, 'myhero2');
 
-    player.scale.setTo(0.25,0.25);
-    player2.scale.setTo(0.25,0.25);
+    player.scale.setTo(0.41,0.41);
+    player2.scale.setTo(0.41,0.41);
 
     timer = game.add.text(380, 20, second);
     labelTurn = game.add.text(450, 20, turn === true ? 'Ваш ход' : 'Ход соперника');
@@ -214,7 +198,7 @@ function create() {
     
     var xhttpGetId = new XMLHttpRequest();
     xhttpGetId.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState === 4 || this.status === 200) {
             myIdTmp = JSON.parse(this.responseText);
             myId = myIdTmp.id;
        }
@@ -233,15 +217,7 @@ function update() {
     game.physics.arcade.collide(player, platforms);
     // делаешь ты 
     function moveTo(x, y, player) {
-        
         game.physics.arcade.moveToXY(player, x, y, 500, 10);
-        /*if (x>=0 && x<=736) {
-            player.x = x;
-        }
-        if (y>=0 && y<=736) {
-            player.y = y;
-        }
-        }*/
     }
 
     player.body.velocity.x = 0;
@@ -286,7 +262,7 @@ function checkStartBattle() {
     if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 ) {
             var xhttpSendStartBattle = new XMLHttpRequest();
             xhttpSendStartBattle.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
+                if (this.readyState === 4 || this.status === 200) {
                     response = this.responseText;
                }
             };
