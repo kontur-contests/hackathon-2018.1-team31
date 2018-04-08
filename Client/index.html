@@ -255,8 +255,6 @@ function create() {
     xhttpGetId.open("GET", apiUrl+"getId", true);
     xhttpGetId.send();
 
-    labelResult = game.add.text(120, 200, '');
-
     isGameReadyTimerObj = setInterval(isGameReadyTimer, 1000);
 
     player.animations.add('left', [0, 1, 2], 5);
@@ -316,21 +314,21 @@ function endGame() {
 }
 
 function checkStar() {
-    if (Math.abs(player.x-6*64)<=50 && Math.abs(player.y - 6*64)<=50) {
+    if (Math.abs(player.x-6*64)<=70 && Math.abs(player.y - 6*64)<=70) {
             var xhttpSendStar = new XMLHttpRequest();
             xhttpSendStar.onreadystatechange = function() {
                 if (this.readyState === 4 || this.status === 200) {
                     response = JSON.parse(this.responseText);
                     win = response.win;
-                    floor = new Phaser.Rectangle(0, 100, 500, 300);
-                    game.debug.geom(floor, '#491b0c');
-                    labelResult.setText(win === true ? `Ты выиграл!\nВойска соперника: \n${response[1].b} Берсерк\n${response[1].p}Пехотинец\n${response[1].m} Маг`
-                        : `Ты проиграл :(\nВойска соперника: \n${response[1].b} Берсерк\n${response[1].p}Пехотинец\n${response[1].m} Маг`);
+                    //floor = new Phaser.Rectangle(150, 150, 500, 300);
+                    //game.debug.geom(floor, '#fff');
+                    //labelResult = game.add.text(160, 220, 'Ты выиграл!', {fill: '#fff', fontSize: '72px'});
+                    labelResult = game.add.text(160, 220, win === true ? 'Ты выиграл!\nВойска соперника: \n'+response[1].b+'Берсерк\n'+response[1].p+'Пехотинец\n'+response[1].m+ 'Маг'
+                        : 'Ты проиграл:\nВойска соперника: \n'+response[1].b+'Берсерк\n'+response[1].p+'Пехотинец\n'+response[1].m+'Маг', {fill: '#fff', fontSize: '72px'});
                 }
             };
             xhttpSendStar.open("GET", apiUrl+"sendStar?id="+myId, true);
             xhttpSendStar.send();
-        game.debug.geom(floor, '#ccc');
     }
 }
 
