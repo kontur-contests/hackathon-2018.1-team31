@@ -69,19 +69,19 @@ http.createServer(function (req, res) {
 
     case '/getEnemyCoordinate':// getEnemyCoordinate?id=2  respond:{x:25,y:35};
       if( arrPlayers[q.query.id]==undefined || 
-          arrPlayers[q.query.id].enemy==undefined //||
-          //arrPlayers[arrPlayers[q.query.id].enemy].coordinateX == undefined
+          arrPlayers[q.query.id].enemy==undefined  ||
+          arrPlayers[arrPlayers[q.query.id].enemy].coordinateX == undefined
         ) {
         return;
       }
       var enemy = arrPlayers[arrPlayers[q.query.id].enemy];
       var respond = {x:enemy.coordinateX,y:enemy.coordinateY};
-      respond.change = arrPlayers[q.query.id].change;
+      respond["change"] = arrPlayers[q.query.id].change;
       res.writeHead(200, {'Access-Control-Allow-Origin': '*'});
+      console.log(respond);
       res.end(JSON.stringify(respond));
       break;
-
-    case '/setMyCoordinate': // setMyCoordinate?id=2&x=2&y=25
+    case '/setMyCoordinate': // setArmy?id=2&b=2&m=25&p=2
       if(arrPlayers[q.query.id]==undefined) {
         return;
       }
@@ -96,6 +96,49 @@ http.createServer(function (req, res) {
       var respond = {x:arrPlayers[q.query.id].coordinateX,y:arrPlayers[q.query.id].coordinateY};
       res.writeHead(200, {'Access-Control-Allow-Origin': '*'});
       res.end(JSON.stringify(respond));
+      break;
+    case '/sendStar': 
+      let ob = {
+        0:{b:arrPlayers[q.query.id].army[0],p:arrPlayers[q.query.id].army[1],m:arrPlayers[q.query.id].army[2]},
+        1:{b:arrPlayers[arrPlayers[q.query.id].enemy].army[0],p:arrPlayers[arrPlayers[q.query.id].enemy].army[1],m:arrPlayers[arrPlayers[q.query.id].enemy].army[2]},
+        2:{b:arrPlayers[q.query.id].army[0] - arrPlayers[arrPlayers[q.query.id].enemy].army[0],p:arrPlayers[q.query.id].army[1]-arrPlayers[arrPlayers[q.query.id].enemy].army[1],m:arrPlayers[q.query.id].army[2]-arrPlayers[arrPlayers[q.query.id].enemy].army[2]}
+      }
+      if((ob[0][0]+ob[0][1]+ob[0][2])*1.25>ob[1][0]+ob[1][1]+ob[1][2]) {
+        ob.win = true;
+      } else {
+        ob.win = false;
+      }
+      res.writeHead(200, {'Access-Control-Allow-Origin': '*'});
+      res.end(JSON.stringify(ob));
+      break;
+    case '/sentArmy': 
+      var army = [];
+      army[0] = q.query.b; 
+      army[1] = q.query.m;
+      army[2] = q.query.p;
+      
+      arrPlayers[q.query.id].army = army;
+      if(arrPlayers[arrPlayers[q.query.id].enemy].win !== undefined) {
+        let ob = {
+          0:{b:arrPlayers[q.query.id].army[0],p:arrPlayers[q.query.id].army[1],m:arrPlayers[q.query.id].army[2]},
+          1:{b:arrPlayers[arrPlayers[q.query.id].enemy].army[0],p:arrPlayers[arrPlayers[q.query.id].enemy].army[1],m:arrPlayers[arrPlayers[q.query.id].enemy].army[2]},
+          2:{b:arrPlayers[q.query.id].army[0] - arrPlayers[arrPlayers[q.query.id].enemy].army[0],p:arrPlayers[q.query.id].army[1]-arrPlayers[arrPlayers[q.query.id].enemy].army[1],m:arrPlayers[q.query.id].army[2]-arrPlayers[arrPlayers[q.query.id].enemy].army[2]}
+        }
+        if(ob[2][0]+ob[2][1]+ob[2][2]>0) {
+          ob.win = true;
+        } else {
+          ob.win = false;
+        }
+        res.writeHead(200, {'Access-Control-Allow-Origin': '*'});
+        res.end(JSON.stringify(ob));
+        return;
+      }
+      res.writeHead(200, {'Access-Control-Allow-Origin': '*'});
+      res.end(JSON.stringify({}));
+      break;
+    case '/getE nemyId': 
+    res.writeHead(200, {'Access-Control-Allow-Origin': '*'});
+      res.end(JSON.stringify(arrPlayers[q.query.id].enemy));
       break;
     default:
       fs.readFile('../client/'+ q.pathname, function(err, data) {
