@@ -6,7 +6,7 @@
 </head>
 <body>
 <script>
-var game = new Phaser.Game(768, 768, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(768, 768, Phaser.AUTO, '', { preload: preload, create: create, update: update,render:render  });
 
 function preload() {
     game.load.image('gold', './assets/Gold.png');
@@ -48,7 +48,7 @@ var platforms;
 function fTurnEnd () {
 
     if(turn == true) {
-        turn = false;
+        //turn = false;
     } else {
         turn = true;
     }
@@ -74,6 +74,7 @@ var xhttpEnemyCoord = new XMLHttpRequest();
         if (this.readyState == 4 || this.status == 200) {
             enemyCoordTmp = JSON.parse(this.responseText);
             if(posPlayer2X != enemyCoordTmp.x || posPlayer2Y != enemyCoordTmp.y) {
+                console.log('df');
                 turn = true;
                 labelTurn.setText(turn === true ? 'Ваш ход' : 'Ход соперника');
             } 
@@ -114,8 +115,8 @@ function isGameReadyTimer () {
                 setInterval(getEnemyCoordTimer, 500);
                 pos = myPosTmp.pos;
                 
-                if(pos === 1) {
-                    turn = false;
+                if(pos === 2) {
+                    //turn = false;
                 } else {
                     turn = true;
                 }
@@ -294,7 +295,13 @@ function checkStartBattle() {
             xhttpSendStartBattle.send();
     }
 }
+function render() {
 
+// Sprite debug info
+game.debug.spriteInfo(player, 32, 32);
+game.debug.spriteInfo(player2, 32, 128);
+
+}
 </script>
 </body>
 </html>
