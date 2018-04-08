@@ -324,7 +324,7 @@ function checkStar() {
                     //game.debug.geom(floor, '#fff');
                     //labelResult = game.add.text(160, 220, 'Ты выиграл!', {fill: '#fff', fontSize: '72px'});
                     labelResult = game.add.text(160, 220, win === true ? 'Ты выиграл!\nВойска соперника: \n'+response[1].b+'Берсерк\n'+response[1].p+'Пехотинец\n'+response[1].m+ 'Маг'
-                        : 'Ты проиграл:\nВойска соперника: \n'+response[1].b+'Берсерк\n'+response[1].p+'Пехотинец\n'+response[1].m+'Маг', {fill: '#fff', fontSize: '72px'});
+                        : 'Ты проиграл:\nВойска соперника: \n'+response[1].b+'Берсерк\n'+response[1].p+'Пехотинец\n'+response[1].m+'Маг', {fill: '#fff', fontSize: '34px'});
                 }
             };
             xhttpSendStar.open("GET", apiUrl+"sendStar?id="+myId, true);
