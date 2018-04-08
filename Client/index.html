@@ -230,24 +230,28 @@ function update() {
         {
             moveTo(player.x,player.y-32,player);
             checkStartBattle();
+            checkStar();
             fTurnEnd();
         }
         else if (cursors.down.isDown)
         {
             moveTo(player.x,player.y+32,player);
             checkStartBattle();
+            checkStar();
             fTurnEnd();
         }
         if (cursors.left.isDown)
         {
             moveTo(player.x-32,player.y,player);
-            //player.animations.play('left');
+            checkStartBattle();
+            checkStar();
             fTurnEnd();
         }
         else if (cursors.right.isDown)
         {
             moveTo(player.x+32,player.y,player);
-            //player.animations.play('right');
+            checkStartBattle();
+            checkStar();
             fTurnEnd();
         }
 
@@ -259,6 +263,18 @@ function update() {
 }
 function endGame() {
     localStorage.removeItem('playerId');
+}
+function checkStar() {
+    if (Math.abs(player.x-6*64)<=64 && Math.abs(player.y - 6*64)<=64) {
+            var xhttpSendStar = new XMLHttpRequest();
+            xhttpSendStar.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    response = this.responseText;
+               }
+            };
+            xhttpSendStar.open("GET", "http://10.34.32.34:80/sendStar", true);
+            xhttpSendStar.send();
+    }
 }
 function checkStartBattle() {
     if (Math.abs(player2.x - player.x) < 32 && Math.abs(player2.y - player.y)<32 ) {
